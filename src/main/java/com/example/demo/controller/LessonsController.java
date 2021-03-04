@@ -1,9 +1,10 @@
 package com.example.demo.controller;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.model.Lesson;
 import com.example.demo.dao.LessonRepository;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/lessons") //lesson endpoint
@@ -23,4 +24,17 @@ public class LessonsController {
         public Lesson create(@RequestBody Lesson lesson) { //take lesson as json and save it to database; add row to DB
             return this.repository.save(lesson);
         }
+
+        @GetMapping("/{getId}") //use pathvariable since dealing with variables
+        public Optional<Lesson> getId5(@PathVariable Long getId){
+            return this.repository.findById(getId);
+
+        }
+
+       @DeleteMapping("/{deleteId}") //use pathvariable since dealing with variables
+       public void deleteId5(@PathVariable Long deleteId){
+            this.repository.deleteById(deleteId);
+
+    }
+
 }
