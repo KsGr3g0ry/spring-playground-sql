@@ -13,14 +13,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class Lesson {
 
     @Id //inside of class lesson; primary key of this table
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //tells how you are going to generate the Id number
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //tells how you are going to generate the Id number, also optional
     private Long id;
     private String title; //
-
+    private Date deliveredOn;
 
     @Column(columnDefinition = "date") //telling JPA fill this column with the sql type date
     @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date deliveredOn;
+
 
     //getters and setters
     public Long getId() {
