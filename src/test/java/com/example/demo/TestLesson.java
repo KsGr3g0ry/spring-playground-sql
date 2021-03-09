@@ -1,5 +1,6 @@
 package com.example.demo;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 import com.example.demo.dao.LessonRepository;
 import com.example.demo.model.Lesson;
@@ -11,14 +12,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 
 import javax.print.attribute.standard.Media;
 import javax.transaction.Transactional;
 import java.beans.Transient;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,15 +44,7 @@ public class TestLesson {
         this.mvc.perform(request) //very that post was sent correctly
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is("Trees")));  //use jsonpath to verify it posted
-        //setup
-        //add info to DB
 
-        //use get to retrieve info
-
-        //execution
-
-        //assertion
-        //response should be json data of tittle and deliveredOn
         }
 
     @Transactional
@@ -72,6 +64,28 @@ public class TestLesson {
                 .andExpect(jsonPath("$[0].title", is("Roses grow in concrete")));
     }
 
+
+    @Test
+    @Transactional
+    @Rollback
+    public void updateLesson() throws Exception{ //patchmapping
+        //create new lesson
+        Lesson lesson1 = new Lesson();
+        //set title
+        lesson1.setTitle("Test1");
+        //save new title to repo
+        Lesson tree = repository.save(lesson1); //single row saved to database; used to save what you saved
+
+        tree.getId();//record you want to update
+        String json2 = ("{\"title\": \"Test2\", \"deliveredOn\":\"2020-05-25\"}");
+
+        MockHttpServletRequestBuilder request = patch("/lessons/" + tree.getId().toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json2);
+
+        this.mvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", is("Test2")));
     }
-//}
-//Write a test for either the GET /lessons or GET /lessons/<id> endpoint.
+
+    }

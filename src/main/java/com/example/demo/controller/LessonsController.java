@@ -4,7 +4,10 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.model.Lesson;
 import com.example.demo.dao.LessonRepository;
 
+import javax.sound.midi.Patch;
 import java.util.Optional;
+
+import static org.springframework.web.bind.annotation.RequestMethod.PATCH;
 
 @RestController
 @RequestMapping("/lessons") //lesson endpoint
@@ -36,5 +39,27 @@ public class LessonsController {
             this.repository.deleteById(deleteId);
 
     }
+
+        @PatchMapping("/{id}")
+        //@PatchMapping(value = "/lessons", produces = "application/json") didnt work
+        public Lesson updateLesson (@RequestBody Lesson lessons, @PathVariable Long id) {
+        //check to see if entry exist
+            if (this.repository.existsById(id)) {
+            //find the record
+            Lesson oldInfo = this.repository.findById(id).get();
+            //update the title
+            oldInfo.setTitle(lessons.getTitle());
+            //update the date
+            oldInfo.setDeliveredOn(lessons.getDeliveredOn());
+            //save the record
+            return this.repository.save(oldInfo);
+        } else {
+            return this.repository.save(lessons);
+        }
+    }
+
+
+
+
 
 }
